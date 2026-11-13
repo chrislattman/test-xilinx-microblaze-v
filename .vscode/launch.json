@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "MicroBlaze-V Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/sw/hello_world/build/hello_world.elf",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerArgs": "-q",
+            "customLaunchSetupCommands": [
+                { "text": "set architecture riscv:rv32" },
+                { "text": "file ${workspaceRoot}/sw/hello_world/build/hello_world.elf" },
+                { "text": "target extended-remote localhost:3004" }
+            ],
+            "launchCompleteCommand": "None"
+        }
+    ]
+}

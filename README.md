@@ -52,6 +52,9 @@ On the Arty Z7, the USB-UART connects only to PS MIO 14/15 (UART0). A UART in th
 
 1. **Hardware:** open `fpga/fpga.xpr` in Vivado, generate the bitstream, and export the hardware (including the bitstream) to `fpga/design_1_wrapper.xsa`
 2. **Software:** open `sw/` as the workspace in Vitis. If the hardware changed, update the platform from the new XSA (it's linked to `fpga/design_1_wrapper.xsa`). Build `platform`, then build `hello_world`
+    - Or, from `sw/`, run `vitis -s build.py` (`--release`, `--clean` and `--distclean` are also supported). It builds the platform and `hello_world`, then embeds `hello_world.elf` into the bitstream's BRAM with `updatemem` (`sw/build/design_1_wrapper.bit`). `vitis -s` exits with 0 even if the script fails, so check its output
+
+To boot from QSPI or SD, run `bootgen -image system.bif -arch zynq -o build/BOOT.bin -w` from `sw/` after `build.py`. The image holds the FSBL and the bitstream with the app already in BRAM: the MicroBlaze-V's BRAM isn't on the PS's bus, so the FSBL can't load the ELF itself.
 
 Launch Vitis from a shell where `source <Vitis install>/settings64.sh` has run, so Vitis's own `riscv64-unknown-elf-gcc` comes first on `PATH`. A distro RISC-V GCC (e.g. Ubuntu's `gcc-riscv64-unknown-elf`) has no C library, and the BSP fails with `string.h: No such file or directory`. If that happens, delete `bsp/libsrc/build_configs/gen_bsp` so CMake searches for the compiler again.
 
@@ -59,13 +62,15 @@ Launch Vitis from a shell where `source <Vitis install>/settings64.sh` has run, 
 
 Use the `hello_world` launch configuration in Vitis. It:
 
-1. programs the FPGA with `sw/platform/export/platform/hw/design_1_wrapper.bit`
-2. initializes the PS over JTAG with `sw/platform/export/platform/hw/ps7_init.tcl` (`ps7_init` and `ps7_post_init`): PLLs and clocks (including `FCLK_CLK0`, which clocks the MicroBlaze-V), MIO, UART0 at 115200 and the PS-PL level shifters. The FSBL isn't used
+1. programs the FPGA with `sw/platform/hw/sdt/design_1_wrapper.bit`
+2. initializes the PS over JTAG with `sw/platform/hw/sdt/ps7_init.tcl` (`ps7_init` and `ps7_post_init`): PLLs and clocks (including `FCLK_CLK0`, which clocks the MicroBlaze-V), MIO, UART0 at 115200 and the PS-PL level shifters. The FSBL isn't used
 3. downloads and runs `hello_world.elf` on `microblaze_riscv_0`
 
-Both files are the platform's copies, which Vitis regenerates when the platform is updated from a new XSA and rebuilt, so the launch always matches the current hardware.
+Both files are the platform's copies, which Vitis regenerates whenever the platform is updated from a new XSA, so the launch always matches the current hardware.
 
 Then open the UART, e.g. `picocom -b 115200 /dev/ttyUSB1`. `/dev/ttyUSB0` is the FTDI's JTAG channel.
+
+To debug from VS Code instead, run `xsdb vscode_debug.tcl` from the repository root (with the Vitis environment sourced), which does the same steps and leaves the app halted at its entry point, then start the "MicroBlaze-V Debug" configuration in `.vscode/launch.json`. It attaches `gdb-multiarch` to hw_server's RISC-V 32-bit GDB server on `localhost:3004`.
 
 ## Notes
 
@@ -73,3 +78,4 @@ Then open the UART, e.g. `picocom -b 115200 /dev/ttyUSB1`. `/dev/ttyUSB0` is the
 - The watchdog's timeout is set by the IP's WDT Interval parameter (2^N clock cycles). The first timeout sets the "expired" flag and the second asserts `wdt_reset`, which goes to `aux_reset_in` on `rst_ps7_0_100M`. Only the PL logic is reset, so the JTAG and UART connections stay up and the app restarts from `0x0` in BRAM
 - The FSBL (`sw/platform/zynq_fsbl`) is only needed to boot from SD or QSPI. Vitis writes its `ps7_init.c` / `ps7_init.h` only when the FSBL is created, so they are symlinks to `sw/platform/hw/sdt/`, which every XSA update regenerates. If Vitis ever recreates the FSBL and replaces the links with files, recreate them with `ln -sf ../hw/sdt/ps7_init.c ps7_init.c` and `ln -sf ../hw/sdt/ps7_init.h ps7_init.h` in `sw/platform/zynq_fsbl`
 - Generated BSP headers in `bsp/include/` are ignored by git, except `xparameters.h`. It's generated only when a domain is created, so a build can't regenerate it if it's deleted
+

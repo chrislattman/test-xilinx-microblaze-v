@@ -28,7 +28,7 @@
           "psDevice": "Auto Detect"
         },
         "resetAPU": false,
-        "bitstreamFile": "${workspaceFolder}/platform/export/platform/hw/design_1_wrapper.bit",
+        "bitstreamFile": "${workspaceFolder}/platform/hw/sdt/design_1_wrapper.bit",
         "zynqInitialization": {
           "isFsbl": false,
           "usingFSBL": {
@@ -39,7 +39,7 @@
           "usingPs7Init": {
             "runPs7Init": true,
             "runPs7PostInit": true,
-            "ps7InitTclFile": "${workspaceFolder}/platform/export/platform/hw/ps7_init.tcl"
+            "ps7InitTclFile": "${workspaceFolder}/platform/hw/sdt/ps7_init.tcl"
           }
         },
         "downloadElf": [

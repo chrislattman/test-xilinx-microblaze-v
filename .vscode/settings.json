@@ -1,0 +1,11 @@
+{
+    "C_Cpp.default.compilerPath": "/home/chris/opt/Xilinx/2025.2/Vitis/gnu/riscv/lin/bin/riscv64-unknown-elf-gcc",
+    "C_Cpp.default.compileCommands": "${workspaceRoot}/sw/hello_world/build/compile_commands.json",
+    "python.analysis.extraPaths": [
+        "/home/chris/opt/Xilinx/2025.2/Vitis/cli",
+        "/home/chris/opt/Xilinx/2025.2/Vitis/cli/python-packages/site-packages",
+        "/home/chris/opt/Xilinx/2025.2/Vitis/cli/python-packages/lnx64",
+        "/home/chris/opt/Xilinx/2025.2/Vitis/cli/proto",
+        "/home/chris/opt/Xilinx/2025.2/Vitis/scripts/python_pkg"
+    ]
+}
