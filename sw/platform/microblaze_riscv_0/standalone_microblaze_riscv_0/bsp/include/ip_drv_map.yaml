@@ -1,0 +1,27 @@
+axi_gpio_0:
+- axi_gpio
+- gpio
+axi_timebase_wdt_0:
+- axi_timebase_wdt
+- wdttb
+microblaze_riscv_0_local_memory_dlmb_bram_if_cntlr:
+- lmb_bram_if_cntlr
+- bram
+ps7_ethernet_0:
+- ps7_ethernet
+- emacps
+ps7_gpio_0:
+- ps7_gpio
+- gpiops
+ps7_qspi_0:
+- ps7_qspi
+- qspips
+ps7_sd_0:
+- ps7_sdio
+- sdps
+ps7_uart_0:
+- ps7_uart
+- uartps
+ps7_usb_0:
+- ps7_usb
+- usbps

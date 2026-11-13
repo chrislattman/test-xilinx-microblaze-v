@@ -1,0 +1,37 @@
+# Vitis build outputs & exported platform packages
+/build
+build_configs/
+/export
+!_ide/
+_ide/*
+!_ide/settings.json
+!_ide/launch.json
+.rigel_lopper/
+.vitisWorkspace.json
+
+# Compiled binaries and object files
+*.o
+*.obj
+*.a
+*.so
+*.d
+*.elf
+*.elf.size
+*.bin
+*.pdi
+
+# Logs and lock files
+/logs
+*.log
+.lock
+
+# Language server & IDE metadata
+.cache/
+.clangd
+.compile_commands
+compile_commands.json
+.hash-map.txt
+.buildstatus
+# BSP headers, regenerated into include/ on every BSP build (libsrc/ headers are sources and stay tracked)
+**/*bsp/include/*.h
+!**/*bsp/include/xparameters.h
