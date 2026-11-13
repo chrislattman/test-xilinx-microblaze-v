@@ -32,14 +32,14 @@
         "zynqInitialization": {
           "isFsbl": false,
           "usingFSBL": {
-            "initWithFSBL": true,
+            "initWithFSBL": false,
             "fsblFile": "${workspaceFolder}/platform/export/platform/sw/boot/fsbl.elf",
             "fsblExitSymbol": "FsblHandoffJtagExit"
           },
           "usingPs7Init": {
             "runPs7Init": true,
             "runPs7PostInit": true,
-            "ps7InitTclFile": "${workspaceFolder}/hello_world/_ide/psinit/ps7_init.tcl"
+            "ps7InitTclFile": "${workspaceFolder}/platform/export/platform/hw/ps7_init.tcl"
           }
         },
         "downloadElf": [

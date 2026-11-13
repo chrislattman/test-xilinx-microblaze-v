@@ -35,7 +35,7 @@
 			xlnx,pcw-act-wdt-peripheral-freqmhz = <0x6750918>;
 			xlnx,pcw-p2f-dmac4-intr = <0>;
 			xlnx,pcw-s-axi-hp3-id-width = <6>;
-			xlnx,pcw-en-emio-uart0 = <1>;
+			xlnx,pcw-en-emio-uart0 = <0>;
 			xlnx,pcw-en-emio-uart1 = <0>;
 			xlnx,pcw-ddr-hpr-to-critical-priority-level = <15>;
 			xlnx,pcw-enet-reset-polarity = "Active , Low";
@@ -405,7 +405,7 @@
 			xlnx,pcw-mio-49-pullup = "enabled";
 			xlnx,pcw-mio-50-pullup = "enabled";
 			xlnx,pcw-p2f-cti-intr = <0>;
-			xlnx,pcw-mio-tree-signals = "gpio[0]#qspi0_ss_b#qspi0_io[0]#qspi0_io[1]#qspi0_io[2]#qspi0_io[3]/HOLD_B#qspi0_sclk#gpio[7]#qspi_fbclk#reset#gpio[10]#gpio[11]#gpio[12]#gpio[13]#gpio[14]#gpio[15]#tx_clk#txd[0]#txd[1]#txd[2]#txd[3]#tx_ctl#rx_clk#rxd[0]#rxd[1]#rxd[2]#rxd[3]#rx_ctl#data[4]#dir#stp#nxt#data[0]#data[1]#data[2]#data[3]#clk#data[5]#data[6]#data[7]#clk#cmd#data[0]#data[1]#data[2]#data[3]#reset#cd#gpio[48]#gpio[49]#gpio[50]#gpio[51]#mdc#mdio";
+			xlnx,pcw-mio-tree-signals = "gpio[0]#qspi0_ss_b#qspi0_io[0]#qspi0_io[1]#qspi0_io[2]#qspi0_io[3]/HOLD_B#qspi0_sclk#gpio[7]#qspi_fbclk#reset#gpio[10]#gpio[11]#gpio[12]#gpio[13]#rx#tx#tx_clk#txd[0]#txd[1]#txd[2]#txd[3]#tx_ctl#rx_clk#rxd[0]#rxd[1]#rxd[2]#rxd[3]#rx_ctl#data[4]#dir#stp#nxt#data[0]#data[1]#data[2]#data[3]#clk#data[5]#data[6]#data[7]#clk#cmd#data[0]#data[1]#data[2]#data[3]#reset#cd#gpio[48]#gpio[49]#gpio[50]#gpio[51]#mdc#mdio";
 			xlnx,pcw-nor-cs0-t-wc = <11>;
 			xlnx,pcw-p2f-smc-intr = <0>;
 			xlnx,pcw-qspi-grp-ss1-enable = <0>;
@@ -625,7 +625,7 @@
 			xlnx,pcw-m-axi-gp1-thread-id-width = <12>;
 			xlnx,pcw-mio-31-pullup = "enabled";
 			xlnx,pcw-usb-reset-enable = <1>;
-			xlnx,pcw-mio-tree-peripherals = "GPIO#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#GPIO#Quad , SPI , Flash#ENET , Reset#GPIO#GPIO#GPIO#GPIO#GPIO#GPIO#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#SD , 0#SD , 0#SD , 0#SD , 0#SD , 0#SD , 0#USB , Reset#SD , 0#GPIO#GPIO#GPIO#GPIO#Enet , 0#Enet , 0";
+			xlnx,pcw-mio-tree-peripherals = "GPIO#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#Quad , SPI , Flash#GPIO#Quad , SPI , Flash#ENET , Reset#GPIO#GPIO#GPIO#GPIO#UART , 0#UART , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#Enet , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#USB , 0#SD , 0#SD , 0#SD , 0#SD , 0#SD , 0#SD , 0#USB , Reset#SD , 0#GPIO#GPIO#GPIO#GPIO#Enet , 0#Enet , 0";
 			xlnx,s-axi-hp0-id-width = <6>;
 			xlnx,include-trace-buffer = <0>;
 			xlnx,pcw-use-cr-fabric = <1>;
@@ -715,7 +715,7 @@
 			xlnx,pcw-can0-peripheral-enable = <0>;
 			xlnx,pcw-use-m-axi-gp0 = <0>;
 			xlnx,pcw-en-emio-cd-sdio0 = <0>;
-			xlnx,pcw-uart0-uart0-io = "EMIO";
+			xlnx,pcw-uart0-uart0-io = "MIO , 14 , .. , 15";
 			xlnx,pcw-use-m-axi-gp1 = <0>;
 			xlnx,pcw-en-emio-cd-sdio1 = <0>;
 			xlnx,pcw-core1-irq-intr = <0>;
@@ -871,7 +871,7 @@
 			xlnx,pcw-qspi-grp-io1-enable = <0>;
 			xlnx,s-axi-gp1-id-width = <6>;
 			xlnx,pcw-uiparam-ddr-bl = <8>;
-			xlnx,pcw-peripheral-board-preset = "None";
+			xlnx,pcw-peripheral-board-preset = "part0";
 			xlnx,pcw-en-emio-wp-sdio0 = <0>;
 			xlnx,pcw-p2f-usb1-intr = <0>;
 			xlnx,pcw-en-emio-wp-sdio1 = <0>;
