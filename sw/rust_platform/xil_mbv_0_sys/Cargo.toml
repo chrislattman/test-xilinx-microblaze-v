@@ -1,0 +1,19 @@
+[package]
+name = "xil-mbv-0-sys"
+description = "Raw bindings to the microblaze_riscv_0 standalone BSP"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+# Exposes DEP_XIL_MBV_0_{BSP_DIR,INCLUDE,LIB_DIR,SPECS,GCC} to dependent build scripts,
+# and keeps a binary from linking two BSPs
+links = "xil_mbv_0"
+
+# no_std: no test/bench harness or doctests on the target (keeps `--all-targets` working)
+[lib]
+test = false
+doctest = false
+bench = false
+
+[build-dependencies]
+xil-bsp-build.workspace = true

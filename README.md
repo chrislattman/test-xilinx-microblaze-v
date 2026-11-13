@@ -79,3 +79,43 @@ To debug from VS Code instead, run `xsdb vscode_debug.tcl` from the repository r
 - The FSBL (`sw/platform/zynq_fsbl`) is only needed to boot from SD or QSPI. Vitis writes its `ps7_init.c` / `ps7_init.h` only when the FSBL is created, so they are symlinks to `sw/platform/hw/sdt/`, which every XSA update regenerates. If Vitis ever recreates the FSBL and replaces the links with files, recreate them with `ln -sf ../hw/sdt/ps7_init.c ps7_init.c` and `ln -sf ../hw/sdt/ps7_init.h ps7_init.h` in `sw/platform/zynq_fsbl`
 - Generated BSP headers in `bsp/include/` are ignored by git, except `xparameters.h`. It's generated only when a domain is created, so a build can't regenerate it if it's deleted
 
+## Rust application
+
+`sw/` is also a Cargo workspace (target `riscv32i-unknown-none-elf`, set in `.cargo/config.toml`) with a `no_std` Rust port of the application, built on bindings to the MicroBlaze-V's standalone BSP:
+
+- `rust_apps_libs/hello_world_rs`: port of `hello_world/src/helloworld.c`
+- `rust_platform/xil_mbv_0_sys`: bindgen bindings to `platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp`
+- `rust_platform/xil_bsp_build`: host-side `build.rs` helper the sys crate uses (bindgen, C shims, link setup)
+
+The C BSP must be built before running `cargo build`: build the platform in Vitis first (`vitis -s build.py` builds it along with the C application), since the bindings are generated from the BSP's `include/` and link against its `lib/*.a`. Then source the Vitis environment and run `cargo build` (or `cargo build --release`) from `sw/`. The ELF is `sw/target/riscv32i-unknown-none-elf/<debug|release>/hello-world-rs`.
+
+To debug it, use the "Rust: MicroBlaze-V Debug" configuration in `.vscode/launch.json` (Native Debug extension with `rust-gdb`). Run `xsdb vscode_debug.tcl rust` first, which loads the Rust ELF instead of the C one.
+
+To boot it from QSPI or SD, embed the release ELF into the bitstream and use `system_rust.bif`. `updatemem` only accepts files ending in `.elf`, so copy it first. From `sw/`:
+
+```
+cargo build --release
+cp target/riscv32i-unknown-none-elf/release/hello-world-rs build/hello-world-rs.elf
+cd build && updatemem -force -meminfo ../platform/hw/sdt/design_1_wrapper.mmi -bit ../platform/hw/sdt/design_1_wrapper.bit \
+    -data hello-world-rs.elf -proc design_1_i/microblaze_riscv_0 -out design_1_wrapper_rust.bit && cd ..
+bootgen -image system_rust.bif -arch zynq -o build/BOOT_rust.bin -w
+```
+
+### Debugging the Rust application in Vitis
+
+`hello_world/_ide/launch.json` has a second configuration, `hello_world_rs_app_hw_1`, which is a copy of `hello_world_app_hw_1` that downloads the Rust ELF instead of the C one. Run `cargo build` from `sw/` first, then launch it in Vitis as usual.
+
+- Vitis doesn't build the Rust application, so run `cargo build` before every launch or Vitis loads a stale ELF
+- The `elfFile` path points straight at the Cargo output (`${workspaceFolder}/target/riscv32i-unknown-none-elf/debug/hello-world-rs`), without a `.elf` extension, so edit `launch.json` directly to change it (e.g. to the `release` build)
+- The application kicks the AXI Timebase Watchdog every 2 seconds, so keep it halted for less than the watchdog's timeout, or the PL (including the MicroBlaze-V) is reset
+
+Notes:
+
+- `hello_world_rs/linker.ld` is a copy of the C application's `lscript.ld`. Keep it in sync when you change the memory map. The whole application has to fit in the 32 KB of BRAM along with its 1 KB stack and 2 KB heap
+- The whole BSP is exposed: `build.rs` generates a wrapper that includes every header in the BSP's `include/` directory, so every driver, `libxil*` function, struct, enum, typedef, global and constant `#define` is available. Regenerating the platform with more drivers picks them up automatically
+    - `SKIP_HEADERS` in `rust_platform/xil_bsp_build/src/lib.rs` lists headers left out because they can't be parsed for this target (`xil_cache_vxworks.h`, `xil_macroback.h`)
+    - bindgen drops constant `#define`s it can't evaluate (e.g. ones with casts or function calls)
+- `static inline` functions (`Xil_In32`, `Xil_Out32`, ...) are wrapped automatically. Function-like macros can't be, so only the ones in `rust_platform/xil_bsp_build/c/xilrs_shim.c` are available (`XGpio_WriteReg`, `XWdtTb_ReadReg`, `fence`, ...). Add a `xilrs_<Name>` wrapper there when you need another. Both kinds are called from Rust by their C names
+- `XPAR_*` constants are `u32`, but some drivers take `UINTPTR` (`usize`), so cast with `as UINTPTR` where C would convert implicitly
+- The BSP archives, `libgcc`, `libgloss` and newlib's `libc` link as one group, which requires linking with (Vitis) `riscv64-unknown-elf-gcc`. The app's `build.rs` passes the BSP's `Xilinx.spec` and its linker script
+- The core has no atomic (A) or multiply (M) extensions, matching `-march=rv32i_zicsr_zifencei`, so `core::sync::atomic` has no read-modify-write operations (`fetch_add`, `compare_exchange`, ...) and multiplication and division are done in software

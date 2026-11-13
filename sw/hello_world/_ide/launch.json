@@ -58,6 +58,64 @@
         }
       },
       "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "tcf-debug",
+      "request": "launch",
+      "name": "hello_world_rs_app_hw_1",
+      "debugType": "baremetal-zynq",
+      "attachToRunningTargetOptions": {
+        "targetSetupMode": "standalone",
+        "executeScript": true,
+        "scriptPath": ""
+      },
+      "autoAttachProcessChildren": false,
+      "target": {
+        "targetConnectionId": "Local",
+        "peersIniPath": "../../_ide/.peers.ini",
+        "context": "zynq"
+      },
+      "pathMap": [],
+      "targetSetup": {
+        "resetSystem": true,
+        "programDevice": true,
+        "partialBitstream": false,
+        "skipRevisionCheck": false,
+        "device": {
+          "plDevice": "Auto Detect",
+          "psDevice": "Auto Detect"
+        },
+        "resetAPU": false,
+        "bitstreamFile": "${workspaceFolder}/platform/hw/sdt/design_1_wrapper.bit",
+        "zynqInitialization": {
+          "isFsbl": false,
+          "usingFSBL": {
+            "initWithFSBL": false,
+            "fsblFile": "${workspaceFolder}/platform/export/platform/sw/boot/fsbl.elf",
+            "fsblExitSymbol": "FsblHandoffJtagExit"
+          },
+          "usingPs7Init": {
+            "runPs7Init": true,
+            "runPs7PostInit": true,
+            "ps7InitTclFile": "${workspaceFolder}/platform/hw/sdt/ps7_init.tcl"
+          }
+        },
+        "downloadElf": [
+          {
+            "core": "microblaze_riscv_0",
+            "resetProcessor": true,
+            "elfFile": "${workspaceFolder}/target/riscv32i-unknown-none-elf/debug/hello-world-rs",
+            "stopAtEntry": false,
+            "isSelfRelocatingApp": false,
+            "relativeAddress": ""
+          }
+        ],
+        "crossTriggerBreakpoints": {
+          "isSelected": false,
+          "breakpoints": []
+        }
+      },
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

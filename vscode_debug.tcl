@@ -3,6 +3,14 @@
 # It leaves hello_world loaded and halted at its entry point; GDB then attaches to
 # hw_server's RISC-V 32-bit GDB server on localhost:3004.
 
+# "xsdb vscode_debug.tcl rust" loads the Rust application (sw/rust_apps_libs,
+# debug build) instead of the C one; use the "Rust: ..." launch configuration then.
+if {[info exists argv] && [lsearch -exact $argv rust] >= 0} {
+    set elf ./sw/target/riscv32i-unknown-none-elf/debug/hello-world-rs
+} else {
+    set elf ./sw/hello_world/build/hello_world.elf
+}
+
 # connect -host 173.673.3.2 -port 3121 if remote debugging to hw_server at 173.673.3.2:3121
 connect
 bpremove -all
@@ -26,5 +34,5 @@ ps7_post_config
 # The Hart target has no jtag_cable_name property, so filter on its MDM parent instead
 targets -set -nocase -filter {name =~ "*Hart**#0" && parent=~"**USER2"}
 rst -processor
-dow ./sw/hello_world/build/hello_world.elf
+dow $elf
 configparams force-mem-access 0

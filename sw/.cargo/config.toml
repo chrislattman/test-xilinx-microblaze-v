@@ -1,0 +1,14 @@
+[build]
+# MicroBlaze-V as configured in the block design: RV32I + Zicsr + Zifencei, soft-float
+# (C side: -march=rv32i_zicsr_zifencei -mabi=ilp32)
+target = "riscv32i-unknown-none-elf"
+
+[target.riscv32i-unknown-none-elf]
+# Link with GCC so the BSP's Xilinx.spec, libgcc, libgloss and newlib are picked up the same
+# way Vitis does. Source Vitis settings64.sh first so Xilinx's riscv64-unknown-elf-gcc is on PATH.
+linker = "riscv64-unknown-elf-gcc"
+rustflags = [
+    "-C", "target-feature=+zicsr,+zifencei",
+    "-C", "link-arg=-march=rv32i_zicsr_zifencei",
+    "-C", "link-arg=-mabi=ilp32",
+]
